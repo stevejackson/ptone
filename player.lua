@@ -2,15 +2,18 @@ Player = class:new()
 
 function Player:init()
   self.texture = love.graphics.newImage('ear.png')
-  self.gravity = 50
+  self.gravity = 500
 
   self.body = Collider:addRectangle(50, 50, 32, 32)
   self.body.speed = 200.0
+  self.body.y_velocity = 0
   self.body.type = 'player'
+  self.body.jumping = false
 end
 
 function Player:update(dt)
-  self.body:move(0, self.gravity*dt)
+  local dx = 0
+  local dy = 0
 
   if love.keyboard.isDown('right') then
     self.body:move(self.body.speed * dt, 0)
@@ -21,9 +24,33 @@ function Player:update(dt)
   elseif love.keyboard.isDown('down') then
     self.body:move(0, self.body.speed * dt)
   end
+
+  if love.keyboard.isDown(' ') then
+    -- we're not already in a jump, and we're not falling
+    if not self.body.jumping and self.body.y_velocity >= 0 then
+      self.body.y_velocity = 300
+      self.body.jumping = true
+    end
+  end
+
+  if self.body.y_velocity ~= 0 then
+    dy = -self.body.y_velocity * dt
+    self.body.y_velocity = self.body.y_velocity - self.gravity * dt
+  else
+    self.body.y_velocity = -self.gravity * dt
+  end
+
+  self.body:move(dx, dy)
+
+end
+
+function Player:keypressed(key)
+  if key == ' ' then
+  end
 end
 
 function Player:draw()
   love.graphics.draw(self.texture, self.body.x, self.body.y)
   self.body:draw('fill')
+  love.graphics.print(self.body.y_velocity,100,100)
 end

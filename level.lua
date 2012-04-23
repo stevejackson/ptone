@@ -11,6 +11,10 @@ function Level:init()
   self.player = Player:new()
 end
 
+function Level:keypressed(key)
+  self.player:keypressed(key)
+end
+
 function Level:update(dt)
   self.player:update(dt)
 end
