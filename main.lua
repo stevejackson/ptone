@@ -2,6 +2,8 @@ require 'lib/Class'
 require 'player'
 require 'level'
 
+Camera = require 'lib/hump/camera'
+
 local HC = require 'lib/HardonCollider'
 
 function on_collision(dt, shape_a, shape_b, mtv_x, mtv_y)
@@ -46,6 +48,7 @@ Collider = HC(100, on_collision)
 
 level = Level:new()
 local mode = 'debug'
+cam = Camera(400,400,1,0)
 
 function love.load()
   love.graphics.setBackgroundColor(0xaa, 0xbb, 0xaa)
@@ -61,12 +64,13 @@ function love.update(dt)
   --  level update
   --  collision update
   level:update(dt)
-
   Collider:update(dt)
 end
 
 function love.draw()
+  cam:attach()
   level:draw()
+  cam:detach()
   
   if mode == 'debug' then
     love.graphics.print(love.timer.getFPS(), 10, 10)
