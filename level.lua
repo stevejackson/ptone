@@ -1,4 +1,4 @@
-local loader = require 'lib/Advanced-Tiled-Loader/AdvTiledLoader/Loader'
+local loader = require 'lib/AdvTiledLoader/Loader'
 loader.path = 'data/maps/'
 
 Level = class:new()
