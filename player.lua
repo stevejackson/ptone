@@ -1,7 +1,7 @@
 Player = class:new()
 
-local GRAVITY = 500
-local JUMP_HEIGHT = 350
+local GRAVITY = 25
+local JUMP_HEIGHT = 500
 
 function Player:init()
   self.body = Collider:addRectangle(50, 50, 32, 32)
@@ -17,13 +17,9 @@ function Player:update(dt)
   local dy = 0
 
   if love.keyboard.isDown('right') then
-    self.body:move(self.body.speed * dt, 0)
+    dx = self.body.speed
   elseif love.keyboard.isDown('left') then
-    self.body:move(-self.body.speed * dt, 0)
-  elseif love.keyboard.isDown('up') then
-    self.body:move(0, -self.body.speed * dt)
-  elseif love.keyboard.isDown('down') then
-    self.body:move(0, self.body.speed * dt)
+    dx = -self.body.speed
   end
 
   if love.keyboard.isDown(' ') then
@@ -35,13 +31,13 @@ function Player:update(dt)
   end
 
   if self.body.y_velocity ~= 0 then
-    dy = -self.body.y_velocity * dt
-    self.body.y_velocity = self.body.y_velocity - GRAVITY * dt
+    dy = -self.body.y_velocity
+    self.body.y_velocity = self.body.y_velocity - GRAVITY
   else
-    self.body.y_velocity = -GRAVITY * dt
+    self.body.y_velocity = -GRAVITY
   end
 
-  self.body:move(dx, dy)
+  self.body:move(dx * dt, dy * dt)
 
   cam.x,cam.y=self.body:center()
   cam.x=math.floor(cam.x)

@@ -20,7 +20,7 @@ function Level:update(dt)
 end
 
 function Level:draw()
-  self.map:setDrawRange(-math.huge, -math.huge, math.huge, math.huge)
+  self.map:setDrawRange(cam.x - RESOLUTION_WIDTH / 2, cam.y - RESOLUTION_HEIGHT / 2, RESOLUTION_WIDTH, RESOLUTION_HEIGHT)
   self.map:draw()
   self.player:draw()
 end

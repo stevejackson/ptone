@@ -20,12 +20,20 @@ function player_with_tile(dt, a, b, dx, dy)
     if math.abs(dy) > math.abs(dx) then
 			if dy < 0 then
 				player_shape.y_velocity = 0
-        player_shape.jumping = false
         num_player_tile_collisions = num_player_tile_collisions + 1
 			else
 				player_shape.y_velocity = 0
 			end
+      px1,py1,px2,py2 = player_shape:bbox()
+      tx1,ty1,tx2,ty2 = tile_shape:bbox()
+
+      -- meaning player is colliding with a ground tile
+      if py2 > ty1 and ty1 > py1 then
+        player_shape.jumping = false
+      end
+
     end
+
   elseif a.type == 'tile' and b.type == 'player' then
     player_shape,tile_shape = b,a
 
@@ -34,11 +42,19 @@ function player_with_tile(dt, a, b, dx, dy)
     if math.abs(dy) > math.abs(dx) then
 			if dy < 0 then
 				player_shape.y_velocity = 0
-        player_shape.jumping = false
         num_player_tile_collisions = num_player_tile_collisions + 1
 			else
 				player_shape.y_velocity = 0
 			end
+    
+      px1,py1,px2,py2 = player_shape:bbox()
+      tx1,ty1,tx2,ty2 = tile_shape:bbox()
+
+      -- meaning player is colliding with a ground tile
+      if py2 > ty1 and ty1 > py1 then
+        player_shape.jumping = false
+      end
+
     end
   else
     return nil
@@ -57,7 +73,7 @@ Collider = HC(100, on_collision)
 
 level = Level:new()
 local mode = 'debug'
-cam = Camera(400,400,1,0)
+cam = Camera(RESOLUTION_WIDTH,RESOLUTION_HEIGHT,1,0)
 
 function love.load()
   love.graphics.setBackgroundColor(0xaa, 0xbb, 0xaa)
