@@ -5,6 +5,7 @@ local JUMP_HEIGHT = 350
 
 function Player:init()
   self.body = Collider:addRectangle(50, 50, 32, 32)
+  Collider:setActive(self.body)
   self.body.speed = 200.0
   self.body.y_velocity = 0
   self.body.type = 'player'
@@ -41,7 +42,10 @@ function Player:update(dt)
   end
 
   self.body:move(dx, dy)
+
   cam.x,cam.y=self.body:center()
+  cam.x=math.floor(cam.x)
+  cam.y=math.floor(cam.y)
 end
 
 function Player:keypressed(key)

@@ -5,42 +5,51 @@ require 'level'
 Camera = require 'lib/hump/camera'
 
 local HC = require 'lib/HardonCollider'
+local num_player_tile_collisions = 0
 
-function on_collision(dt, shape_a, shape_b, mtv_x, mtv_y)
-  player_with_tile(dt, shape_a, shape_b, mtv_x, mtv_y) 
+function on_collision(dt, a, b, dx, dy)
+  player_with_tile(dt, a, b, dx, dy) 
 end
 
-function player_with_tile(dt, shape_a, shape_b, mtv_x, mtv_y)
+function player_with_tile(dt, a, b, dx, dy)
   local player_shape, tile_shape
 
-  if shape_a.type == 'player' and shape_b.type == 'tile' then
-    player_shape = shape_a
-    tile_shape = shape_b
+  if a.type == 'player' and b.type == 'tile' then
+    player_shape,tile_shape = a,b
 
-    player_shape:move(mtv_x, mtv_y)
-    if math.abs(mtv_y) > math.abs(mtv_x) then
-			if mtv_y < 0 then
+    if math.abs(dy) > math.abs(dx) then
+			if dy < 0 then
 				player_shape.y_velocity = 0
         player_shape.jumping = false
+        num_player_tile_collisions = num_player_tile_collisions + 1
 			else
-				player_shape.y_velocity = -1
+				player_shape.y_velocity = 0
 			end
     end
-  elseif shape_a.type == 'tile' and shape_b.type == 'player' then
-    player_shape = shape_b
-    tile_shape = shape_a
+  elseif a.type == 'tile' and b.type == 'player' then
+    player_shape,tile_shape = b,a
 
-    player_shape.move(mtv_x, mtv_y)
-    if math.abs(mtv_y) > math.abs(mtv_x) then
-			if mtv_y < 0 then
+    dx, dy = -dx, -dy
+
+    if math.abs(dy) > math.abs(dx) then
+			if dy < 0 then
 				player_shape.y_velocity = 0
         player_shape.jumping = false
+        num_player_tile_collisions = num_player_tile_collisions + 1
 			else
-				player_shape.y_velocity = -1
+				player_shape.y_velocity = 0
 			end
     end
   else
     return nil
+  end
+
+  -- if the player is standing on two blocks at once, don't correct for both
+  if num_player_tile_collisions < 2 then
+    player_shape:move(dx, dy)
+    cam.x,cam.y=player_shape:center()
+    cam.x=math.floor(cam.x)
+    cam.y=math.floor(cam.y)
   end
 end
 
@@ -63,8 +72,10 @@ function love.update(dt)
   --  player update (gravity, movement)
   --  level update
   --  collision update
+
   level:update(dt)
   Collider:update(dt)
+  num_player_tile_collisions = 0 -- reset every frame
 end
 
 function love.draw()

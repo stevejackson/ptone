@@ -20,6 +20,7 @@ function Level:update(dt)
 end
 
 function Level:draw()
+  self.map:setDrawRange(-math.huge, -math.huge, math.huge, math.huge)
   self.map:draw()
   self.player:draw()
 end
